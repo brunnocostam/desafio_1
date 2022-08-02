@@ -32,14 +32,16 @@ app.post('/users', (request, response) => {
     return response.status(400).json({error: "User already exists!"})
   }
 
-  users.push({
+  const user = {
     id: uuidv4(),
     name,
     username,
     todos: []
-  });
+  }
 
-  return response.status(201).json({users})
+  users.push(user);
+
+  return response.status(201).json(user)
 
 });
 //ok
@@ -65,7 +67,7 @@ app.post('/todos', checkExistsUserAccount, (request, response) => {
 
   user.todos.push(todo);
 
-  return response.json(todo);
+  return response.status(201).json(todo);
 
 });
 //ok
@@ -77,7 +79,7 @@ app.put('/todos/:id', checkExistsUserAccount, (request, response) => {
   const todo = user.todos.find((todo) => todo.id === id)
 
   if(!todo) {
-    return response.json({error: "invalid to_do id"})
+    return response.status(404).json({error: "invalid to_do id"})
   }
 
   todo.title = title;
@@ -93,7 +95,7 @@ app.patch('/todos/:id/done', checkExistsUserAccount, (request, response) => {
   const todo = user.todos.find((todo) => todo.id === id);
 
   if(!todo) {
-    return response.json({error: "invalid to_do id"});
+    return response.status(404).json({error: "invalid to_do id"});
   }
 
   todo.done = true;
@@ -109,14 +111,15 @@ app.delete('/todos/:id', checkExistsUserAccount, (request, response) => {
   const todo = user.todos.find((todo) => todo.id === id);
 
   if(!todo) {
-    return response.json({error: "invalid to_do id"});
+    return response.status(404).json({error: "invalid to_do id"});
   };
 
   user.todos.splice(todo, 1);
 
   // user.todo.splice(todos, 1);
 
-  return response.status(201).json({todo})
+  return response.sendStatus(204);
+  
 
 });
 
